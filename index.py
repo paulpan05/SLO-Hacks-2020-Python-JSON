@@ -3,7 +3,6 @@ import json
 import re
 
 rCVEjson = requests.get('https://access.redhat.com/hydra/rest/securitydata/cve.json?package=nginx').json()
-p = re.compile('[0-9]*\.[0-9]*')
 
 result = dict()
 
@@ -13,12 +12,14 @@ for cve in rCVEjson:
         if "affected_release" in rCVE:
             for release in rCVE["affected_release"]:
                 if "package" in release:
+                    r = re.search('[0-9]*\.[0-9]*', release["package"])
+                    release_num = r.group()
                     if "nginx" not in result:
                         result["nginx"] = dict()
                     nginxDict = result["nginx"]
-                    if release["package"] not in nginxDict:
-                        nginxDict[release["package"]] = dict()
-                    nginxRelease = nginxDict[release["package"]]
+                    if release_num not in nginxDict:
+                        nginxDict[release_num] = dict()
+                    nginxRelease = nginxDict[release_num]
                     if rCVE["threat_severity"] not in nginxRelease:
                         nginxRelease[rCVE["threat_severity"]] = list()
                     nginxRelease[rCVE["threat_severity"]].append(cve["CVE"])
