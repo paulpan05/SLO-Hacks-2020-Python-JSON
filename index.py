@@ -19,8 +19,8 @@ for cve in rCVEjson:
                     if release["package"] not in nginxDict:
                         nginxDict[release["package"]] = dict()
                     nginxRelease = nginxDict[release["package"]]
-                    if cve["CVE"] not in nginxRelease:
-                        nginxRelease[cve["CVE"]] = dict()
-                    nginxRelease[cve["CVE"]] = {"threat_severity": rCVE["threat_severity"]}
+                    if rCVE["threat_severity"] not in nginxRelease:
+                        nginxRelease[rCVE["threat_severity"]] = list()
+                    nginxRelease[rCVE["threat_severity"]].append(cve["CVE"])
 
 print(json.dumps(result, indent=2))
